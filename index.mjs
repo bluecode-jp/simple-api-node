@@ -1,5 +1,5 @@
 import express from 'express';
-import db from './db.mjs'; 
+import db from './db.mjs';
 
 // expressのインスタンスを生成
 const app = express();
@@ -10,6 +10,15 @@ app.use(express.json());
 const regex_title = /^.{1,10}$/;
 const regex_email = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 const regex_message = /^.{1,20}$/;
+
+// CORS対応
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "*");
+    res.setHeader("Access-Control-Allow-Headers", "*");
+    if (req.method === "OPTIONS") return res.sendStatus(200);
+    next();
+});
 
 // rootにアクセスしたときの対応実装
 app.get("/", (req, res) => {
