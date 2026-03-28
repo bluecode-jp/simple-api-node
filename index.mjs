@@ -6,11 +6,6 @@ const app = express();
 // jsonを扱えるように設定（現時点では不要）
 app.use(express.json());
 
-// バリデーション用の正規表現作成
-const regex_title = /^.{1,10}$/;
-const regex_email = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-const regex_message = /^.{1,20}$/;
-
 // CORS対応
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -19,6 +14,11 @@ app.use((req, res, next) => {
     if (req.method === "OPTIONS") return res.sendStatus(200);
     next();
 });
+
+// バリデーション用の正規表現作成
+const regex_title = /^.{1,10}$/;
+const regex_email = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+const regex_message = /^.{1,20}$/;
 
 // rootにアクセスしたときの対応実装
 app.get("/", (req, res) => {
