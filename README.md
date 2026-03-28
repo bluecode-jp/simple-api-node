@@ -84,8 +84,3 @@ http://localhost:3000/contacts
 ```bash
 curl -X GET http://localhost:3000/contacts
 ```
-
-## ライセンス
-
-- MIT License
-
