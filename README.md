@@ -7,7 +7,16 @@ Node.js + ExpressによるシンプルなWebAPI実装
 - main
   - シンプルなAPIのみ実装
 
+## 前提
+
+- 環境
+  - macOS
+    - 特に依存要素は無いが、作成環境がmacOS
+  - Node.jsがインストール済み
+
 ## 利用方法
+
+cloneして、npm installして、実行。
 
 ```bash
 git clone https://github.com/eizaburo/simple-api-node.git
@@ -15,7 +24,6 @@ cd simple-web-node
 npm install
 node index.mjs
 ```
-
 
 ## API仕様
 
