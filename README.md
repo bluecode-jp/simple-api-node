@@ -84,11 +84,11 @@ node index.mjs
 curl -X POST \
 -H "Content-Type: application/json" \
 -d '{"title":"hoge", "email":"hoge@hoge.com", "message":"hogehoge"}' \
-http://localhost:3000/contacts
+http://localhost:3333/contacts
 ```
 
 登録データ収録
 
 ```bash
-curl -X GET http://localhost:3000/contacts
+curl -X GET http://localhost:3333/contacts
 ```
