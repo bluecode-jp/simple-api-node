@@ -81,7 +81,7 @@ app.get("/contacts", (req, res) => {
 
 });
 
-// 3000番ポートでリッスン開始（サーバスタート）
+// 3333番ポートでリッスン開始（サーバスタート）
 app.listen(3333, () => {
     console.log("Server start.");
 });
