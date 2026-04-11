@@ -28,8 +28,8 @@ app.get("/", (req, res) => {
 // 新規登録API
 app.post("/contacts", async (req, res) => {
 
-    // テスト用にSleep処理（数値は適宜調整）
-    // await new Promise(resolve => setTimeout(resolve, 2000));
+    // テスト用にSleep処理を追加（数値は適宜調整：1000ms = 1秒）
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     // jsonの値を受け取って分割代入
     // 正規表現が正しく機能するために、初期値として""を設定（null, undefinedを防止）
