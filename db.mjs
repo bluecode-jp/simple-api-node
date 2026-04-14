@@ -2,7 +2,7 @@
 import Database from 'better-sqlite3';
 
 // sqliteのインスタンス生成
-const db = new Database("testdb");
+const db = new Database("test.db");
 // ロック発生しにくいモードに設定
 db.pragma("journal_mode = WAL");
 
