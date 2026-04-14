@@ -15,6 +15,21 @@ app.use((req, res, next) => {
     next();
 });
 
+// ミドルウエアとして認証機能を実装
+const authenticate = (req, res, next) => {
+    // Authorizationヘッダーを取得
+    const authHeader = req.headers['authorization'];
+    // Bearer hogehoge12345をスペースで区切り、後者だけをtokenとして取得
+    const token = authHeader ? authHeader.split(' ')[1] : null;
+    // tokenが指定文字かを判断
+    if (token === 'hogehoge12345') return next();
+    // 間違っていたら認証エラー
+    return res.status(401).json({ status: "error", message: "認証に失敗しました。" });
+};
+
+// ルート名が/contactsのすべてに認証を適用
+app.use('/contacts', authenticate);
+
 // バリデーション用の正規表現作成
 const regex_title = /^.{1,10}$/;
 const regex_email = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
