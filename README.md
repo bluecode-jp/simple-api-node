@@ -8,6 +8,10 @@
 
 - main
   - シンプルなWebUIと連携する基本実装
+- spike/crud
+ - CRUD実装
+- spike/jwt
+ - JWT認証実装
 
 ## 開発・動作確認環境
 
