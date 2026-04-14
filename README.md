@@ -15,7 +15,7 @@
 
 ## 開発・動作確認環境
 
-- macOS(Apple Silico)
+- macOS(Apple Silicon)
 - Node.js（24.x）
 
 ## 利用方法
