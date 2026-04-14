@@ -25,7 +25,7 @@ app.get("/", (req, res) => {
     res.send("Hello Node.js");
 });
 
-// 新規登録API
+// 新規登録API（CREATE）
 app.post("/contacts", async (req, res) => {
 
     // テスト用にSleep処理を追加（数値は適宜調整：1000ms = 1秒）
@@ -64,7 +64,7 @@ app.post("/contacts", async (req, res) => {
 
 });
 
-// 全データ返却API
+// 全データ返却API（READ_ALL）
 app.get("/contacts", (req, res) => {
 
     // db処理（SELECT）
@@ -83,6 +83,92 @@ app.get("/contacts", (req, res) => {
     }
 
 });
+
+
+// 指定データ返却API（READ_ID）
+app.get("/contacts/:id", (req, res) => {
+
+    const { id } = req.params;
+
+    // db処理（SELECT）
+    try {
+        const row = db.prepare(`select * from contacts where id = ?`).get(id);
+
+        if (!row)
+            return res.status(404).json({ status: "error", message: "指定されたデータが見つかりません。" });
+
+        // レスポンス
+        res.json({
+            status: "success",
+            message: "指定データを返します",
+            data: row
+        });
+
+    } catch (error) {
+        return res.status(500).json({ status: "error", message: error.message });
+    }
+
+});
+
+// 指定データ更新API（UPDATE）
+app.put("/contacts/:id", (req, res) => {
+
+    const { id } = req.params;
+    const { title = "", email = "", message = "" } = req.body || {};
+
+    // バリデーション
+    if (!regex_title.test(title))
+        return res.status(400).json({ status: "error", message: "titleの値が不正です。" });
+    if (!regex_email.test(email))
+        return res.status(400).json({ status: "error", message: "emailの値が不正です。" });
+    if (!regex_message.test(message))
+        return res.status(400).json({ status: "error", message: "messageの値が不正です。" });
+
+    // db処理（UPDATE）
+    try {
+        const result = db.prepare(`update contacts set title = ?, email = ?, message = ? where id = ?`).run(title, email, message, id);
+
+        if (result.changes === 0)
+            return res.status(404).json({ status: "error", message: "指定されたデータが見つかりません。" });
+
+        // レスポンス
+        res.json({
+            status: "success",
+            message: "データを更新しました",
+            data: { id: Number(id), title, email, message }
+        });
+
+    } catch (error) {
+        return res.status(500).json({ status: "error", message: error.message });
+    }
+
+});
+
+// 指定データ削除API（DELETE）
+app.delete("/contacts/:id", (req, res) => {
+
+    const { id } = req.params;
+
+    // db処理（DELETE）
+    try {
+        const result = db.prepare(`delete from contacts where id = ?`).run(id);
+
+        if (result.changes === 0)
+            return res.status(404).json({ status: "error", message: "指定されたデータが見つかりません。" });
+
+        // レスポンス
+        res.json({
+            status: "success",
+            message: "データを削除しました",
+            data: { id: Number(id) }
+        });
+
+    } catch (error) {
+        return res.status(500).json({ status: "error", message: error.message });
+    }
+
+});
+
 
 // 3333番ポートでリッスン開始（サーバスタート）
 app.listen(3333, () => {
