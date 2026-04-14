@@ -1,5 +1,8 @@
 .DS_Store
 .vscode
 node_modules
-testdb*
+test*
+*.db
+*-shm
+*-wal
 keys/
