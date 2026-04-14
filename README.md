@@ -20,5 +20,12 @@
 git clone https://github.com/bluecode-jp/simple-api-node.git
 cd simple-web-node
 npm install
+
+# 鍵生成
+mkdir keys
+openssl genrsa -out keys/private.pem 2048
+openssl rsa -in keys/private.pem -pubout -out keys/public.pem
+
+# API実行
 node index.mjs
 ```
