@@ -1,5 +1,12 @@
 import express from 'express';
 import db from './db.mjs';
+import jwt from 'jsonwebtoken';
+import { readFileSync } from 'fs';
+
+// RSA鍵の読み込み（RS256用）
+const privateKey = readFileSync('./keys/private.pem');
+const publicKey  = readFileSync('./keys/public.pem');
+
 
 // expressのインスタンスを生成
 const app = express();
@@ -15,20 +22,42 @@ app.use((req, res, next) => {
     next();
 });
 
-// ミドルウエアとして認証機能を実装
+// 認証ミドルウェア（JWT検証）
 const authenticate = (req, res, next) => {
     // Authorizationヘッダーを取得
     const authHeader = req.headers['authorization'];
-    // Bearer hogehoge12345をスペースで区切り、後者だけをtokenとして取得
+    // Bearerをスペースで区切り、後者だけをtokenとして取得
     const token = authHeader ? authHeader.split(' ')[1] : null;
-    // tokenが指定文字かを判断
-    if (token === 'hogehoge12345') return next();
-    // 間違っていたら認証エラー
-    return res.status(401).json({ status: "error", message: "認証に失敗しました。" });
+    if (!token)
+        return res.status(401).json({ status: "error", message: "トークンがありません。" });
+    try {
+        // 公開鍵を使って署名を検証
+        req.user = jwt.verify(token, publicKey, { algorithms: ['RS256'] });
+        next();
+    } catch {
+        return res.status(401).json({ status: "error", message: "トークンが無効です。" });
+    }
 };
 
-// ルート名が/contactsのすべてに認証を適用
+// /contacts 以下のルートすべてに認証を適用
 app.use('/contacts', authenticate);
+
+// ログインAPI（AccessToken発行）
+app.post("/login", (req, res) => {
+
+    // IDとPasswordを取得
+    const { id = "", password = "" } = req.body || {};
+
+    // ID, Passsword認証。本当はデータベースの情報（Passwordはハッシュ値）等と比較
+    if (id !== 'hogehoge' || password !== 'fugafuga')
+        return res.status(401).json({ status: "error", message: "IDまたはパスワードが違います。" });
+
+    // ペイロードを指定（expはjsonwebtokenライブラリが自動付与。有効期限は10分）
+    const accessToken = jwt.sign({ sub: id, type: 'access' },privateKey,{ algorithm: 'RS256', expiresIn: '10m' });
+
+    // access tokenを返す
+    res.json({ status: "success", accessToken });
+});
 
 // バリデーション用の正規表現作成
 const regex_title = /^.{1,10}$/;
