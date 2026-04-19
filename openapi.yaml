@@ -1,0 +1,145 @@
+openapi: 3.0.3
+info:
+  title: Simple API
+  version: 1.0.0
+
+servers:
+- url: http://localhost:3333
+
+paths:
+  /:
+    get:
+      summary: ヘルスチェック
+      responses:
+        '200':
+          description: 成功
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Hello Node.js
+
+  /contacts:
+    get:
+      summary: 全件取得
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: 全データを返します
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Contact'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: 新規登録
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactInput'
+      responses:
+        '200':
+          description: 登録成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: 受け取り保存しました
+                  data:
+                    $ref: '#/components/schemas/Contact'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    Contact:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: テスト
+        email:
+          type: string
+          format: email
+          example: test@example.com
+        message:
+          type: string
+          example: テストメッセージ
+
+    ContactInput:
+      type: object
+      required:
+      - title
+      - email
+      - message
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 10
+          example: テスト
+        email:
+          type: string
+          format: email
+          example: test@example.com
+        message:
+          type: string
+          minLength: 1
+          maxLength: 20
+          example: テストメッセージ
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        message:
+          type: string
+          example: エラーメッセージ
+
+  responses:
+    BadRequest:
+      description: バリデーションエラー
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            invalidTitle:
+              value: { status: error, message: titleの値が不正です。 }
+            invalidEmail:
+              value: { status: error, message: emailの値が不正です。 }
+            invalidMessage:
+              value: { status: error, message: messageの値が不正です。 }
+    InternalServerError:
+      description: サーバーエラー
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
